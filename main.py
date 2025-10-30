@@ -1,34 +1,22 @@
+import os
 from moviepy.editor import VideoFileClip
+from PIL import Image
 
-def konwertuj_webm_na_gif(nazwa_pliku):
-    if not nazwa_pliku.endswith(".webm"):
-        print("To nie jest plik .webm!")
-        return
-    clip = VideoFileClip(nazwa_pliku)
-    clip.write_gif(nazwa_pliku.replace(".webm", ".gif"))
-    print("Zapisano plik GIF!")
+def konwertuj_folder(folder, tryb="gif"):
+    for plik in os.listdir(folder):
+        if plik.endswith(".webm"):
+            sciezka = os.path.join(folder, plik)
+            if tryb == "gif":
+                clip = VideoFileClip(sciezka)
+                clip.write_gif(sciezka.replace(".webm", ".gif"))
+            elif tryb == "png":
+                clip = VideoFileClip(sciezka)
+                frame = clip.get_frame(0)
+                obraz = Image.fromarray(frame)
+                obraz.save(sciezka.replace(".webm", ".png"))
+            print(f"Przekonwertowano: {plik}")
 
-def konwertuj_webm_na_png(nazwa_pliku):
-    if not nazwa_pliku.endswith(".webm"):
-        print("To nie jest plik .webm!")
-        return
-    clip = VideoFileClip(nazwa_pliku)
-    frame = clip.get_frame(0)  # pierwszy kadr
-    from PIL import Image
-    obraz = Image.fromarray(frame)
-    obraz.save(nazwa_pliku.replace(".webm", ".png"))
-    print("Zapisano plik PNG!")
-
-print("=== Konwerter plików WEBM ===")
-plik = input("Podaj nazwę pliku .webm: ")
-
-print("1. Konwersja na GIF")
-print("2. Konwersja na PNG")
-wybor = input("Wybierz (1 lub 2): ")
-
-if wybor == "1":
-    konwertuj_webm_na_gif(plik)
-elif wybor == "2":
-    konwertuj_webm_na_png(plik)
-else:
-    print("Nieprawidłowy wybór.")
+print("=== Konwerter folderu WEBM ===")
+folder = input("Podaj ścieżkę do folderu: ")
+tryb = input("Wybierz format (gif/png): ").lower()
+konwertuj_folder(folder, tryb)
